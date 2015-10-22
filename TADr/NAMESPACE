@@ -3,5 +3,6 @@
 export(TAD)
 export(condensed_index_from_row_col)
 export(row_col_from_condensed_index)
-import(igraph)
 import(cccd)
+import(igraph)
+import(proxy)

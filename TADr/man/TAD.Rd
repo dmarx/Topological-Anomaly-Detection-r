@@ -2,66 +2,86 @@
 % Please edit documentation in R/TAD.R
 \name{TAD}
 \alias{TAD}
-\title{Topological Anomaly Detection.}
+\title{Topological Anomaly Detection}
 \usage{
 TAD(dat, rq = 0.1, p = 0.1, knn = FALSE, k = 3, return_scores = TRUE,
   return_graph = FALSE, return_dist = FALSE, verbose = FALSE,
-  rqSample = NULL)
+  rqSample = NULL, method = "euclidean")
 }
 \arguments{
 \item{dat}{Input data, as a matrix or dataframe. Each row corresponds to a
-unique observation, columns correspond to variables.}
+  unique observation, columns correspond to variables.}
 
 \item{rq}{If not using the KNN method, this is the "graph resolution" as a
-quantile of the observed inter-observation distances. Defaults to .1 (10%).}
+  quantile of the observed inter-observation distances. Defaults to .1
+  (10\%).}
 
 \item{p}{The "background" threshold as a percentile of the number of
-observations in the input data. Defaults to .1, i.e. observations in
-connected components containing 10% or fewer of the dataset will be flagged
-as outliers.}
+  observations in the input data. Defaults to .1, i.e. observations in
+  connected components containing 10\% or fewer of the dataset will be
+  flagged as outliers.}
 
 \item{knn}{Boolean, whether or not to represent the data as a nearest-
-neighbor graph (as opposed to a thresholded distance graph). Defaults to
-FALSE, i.e. not using KNN method.}
+  neighbor graph (as opposed to a thresholded distance graph). Defaults to
+  FALSE, i.e. not using KNN method.}
 
 \item{k}{If using KNN method, determines the number of neighbors considered
-in constructing the nearest neighbors graph. Defaults to 3.}
+  in constructing the nearest neighbors graph. Defaults to 3.}
 
 \item{return_scores}{Boolean value that determines whether or not outleir
-scores will be calculated and returned. If scores are not needed, setting
-this parameter to FALSE will impart speed gains on the classification.
-Defaults to TRUE.}
+  scores will be calculated and returned. If scores are not needed, setting
+  this parameter to FALSE will impart speed gains on the classification.
+  Defaults to TRUE.}
 
 \item{return_graph}{Boolean value that determines whether or not to return
-the graph representation of the data (as an igraph::graph object). Defaults
-to FALSE.}
+  the graph representation of the data (as an igraph::graph object). Defaults
+  to FALSE.}
 
 \item{return_dist}{Boolean value that determines whether or not to return the
-inter-observation distance matrix (as a dist object). If knn=FALSE and
-return_scores=FALSE this will require an additional separate calculation.
-Defaults to FALSE.}
+  inter-observation distance matrix (as a dist object). If knn=FALSE and
+  return_scores=FALSE this will require an additional separate calculation.
+  Defaults to FALSE.}
 
 \item{verbose}{Boolean that determiens whether or not to run in "verbose"
-mode. Defaults to FALSE.}
+  mode. Defaults to FALSE.}
 
-\item{rqSample}{If non-null and knn=FALSE, determines the max size of the
-sample of inter-observation distances to be used to determine graph
-resolution from the rq quantile parameter. If NULL, all distances are used.
-Defaults to NULL.}
+\item{rqSample}{This is an optional performance tweak for large datasets. If non-null
+  and knn=FALSE, determines the max size of the sample of inter-observation
+  distances to be used to determine graph resolution from the rq quantile
+  parameter. If NULL, all distances are used. Defaults to NULL. If rqSample < n(n-1)/2,
+  setting this parameter does not modify the behavior of the function.}
+
+\item{method}{Determines the distance metric (to be passed to proxy::dist) to be used to calculate inter-observation
+  distances. For a list of all available techniques, run: names(proxy::pr_DB$get_entries())}
 }
 \value{
-numeric vector giving number of characters in each element of the
+Numeric vector giving number of characters in each element of the
   character vector.  Missing strings have missing length.
 }
 \description{
-Topological Anomaly Detection.
+Unsupervised anomaly detection that targets clusters of
+  anomalies
+}
+\details{
+Given n observations, consider an n-by-n distance matrix M. Let d
+  denote the rq-th percentile of distances in M1. Set all distances greater
+  than d to 0 and all other entries to 1. Call this new matrix M2. Define a
+  graph g whose adjacency matrix is given by M2. Identify all connected
+  components of g and count the number of observations in each component. Any
+  component containing fewer than p*n observations is flagged as anomalous,
+  and all observations in that component are determined to be anomalies.
+
+  For each observation flagged as an anomaly, determine the shortest distance
+  from that observation to a non-anomalous observation. This distance is the
+  anomaly score for that observation.
 }
 \examples{
+library(igraph)
 data(iris)
 pca = prcomp(iris[,-5] ,center=TRUE, scale=TRUE)
 colpal=colorRampPalette(c("yellow","red"))(10)
 
-## Normal algorithm ##
+#'  ## Normal algorithm ##
 tad = TAD(iris[,-5], return_graph=TRUE, verbose=TRUE, return_scores=TRUE)
 g = tad$graph
 

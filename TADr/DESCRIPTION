@@ -1,8 +1,10 @@
 Package: TADr
-Title: What the Package Does (one line, title case)
+Title: Topological Anomaly Detection
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Authors@R: person("David", "Marx", email = "David.Marx84@gmail.com", role = c("aut", "cre"))
+Description: Unsupervised anomaly detection to identify clusters of anomalous observations per Gartley and Basener (2009).
 Depends: R (>= 3.2.0)
-License: What license is it under?
+License: GPL-2
+URL: https://github.com/dmarx/Topological-Anomaly-Detection-r
+BugReports: https://github.com/dmarx/Topological-Anomaly-Detection-r/issues
 LazyData: true
