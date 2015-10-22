@@ -17,18 +17,3 @@ is considered an anomalous component, and all the observations (nodes) in this c
 
 The only tuning parameters are 'r' and 'p'. The default for 'p' is based on the recommendation in the Gartley paper, but there's no recommended heuristic for
 constructing 'r' so I just set it to a value that seems to work (the 10th percentile distance of the adjacency matrix).
-
-Requires
---------
-* `networkx`
-* `numpy`
-* `pandas`
-* `scipy`
-
-The pandas requirement is just a convenience to return the outlier scores as a `pandas.Series`. To break this requirement, modify the return value of `calculate_anomaly_scores` 
-to just return the `scores` variable (a dict) instead of wrapping it in a `pandas.Series`.
-
-Usage
----------
-Demo usage can be found in the file `demo.py`. The above image demonstrates the result when TAD is applied to the Iris dataset (observation positions given by PCA). 
-NB: The demo requires `sklearn` for the iris data and for PCA.
